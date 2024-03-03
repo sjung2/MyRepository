@@ -1,0 +1,62 @@
+import java.util.Random;
+
+// Abstract class representing a financial instrument
+abstract class FinancialInstrument {
+    protected String symbol;
+    protected double price;
+
+    public FinancialInstrument(String symbol, double price) {
+        this.symbol = symbol;
+        this.price = price;
+    }
+
+    // Abstract method to update the price of the instrument
+    public abstract void updatePrice();
+
+    // Getter method for symbol
+    public String getSymbol() {
+        return symbol;
+    }
+
+    // Getter method for price
+    public double getPrice() {
+        return price;
+    }
+}
+
+// Concrete subclass representing a stock
+class Stock extends FinancialInstrument {
+    public Stock(String symbol, double price) {
+        super(symbol, price);
+    }
+
+    // Update the price of the stock randomly
+    @Override
+    public void updatePrice() {
+        Random rand = new Random();
+        // Simulate price change by a random percentage
+        double change = price * 0.05 * (rand.nextDouble() - 0.5); // +/- 5%
+        price += change;
+    }
+}
+
+// Main class to simulate the financial market
+public class FinancialMarketSimulator {
+    public static void main(String[] args) {
+        // Create an array of financial instruments
+        FinancialInstrument[] instruments = new FinancialInstrument[3];
+        instruments[0] = new Stock("AAPL", 150.0);
+        instruments[1] = new Stock("GOOG", 2700.0);
+        instruments[2] = new Stock("MSFT", 300.0);
+
+        // Simulate market updates
+        for (int i = 0; i < 10; i++) {
+            System.out.println("Market update " + (i + 1) + ":");
+            for (FinancialInstrument instrument : instruments) {
+                instrument.updatePrice();
+                System.out.println(instrument.getSymbol() + " price: $" + instrument.getPrice());
+            }
+            System.out.println();
+        }
+    }
+}
