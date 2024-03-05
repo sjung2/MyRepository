@@ -1,0 +1,46 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Assignment_13 {
+    public static void main(String[] args) {
+        String inputFilePath = "input.txt";
+        String outputFilePath = "output.txt";
+
+        Map<String, Integer> wordCount = countWords(inputFilePath);
+
+        writeWordCount(outputFilePath, wordCount);
+
+        System.out.println("Word count written to " + outputFilePath);
+    }
+
+    private static Map<String, Integer> countWords(String inputFilePath) {
+        Map<String, Integer> wordCount = new HashMap<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFilePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String word = line.toLowerCase(); 
+                wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return wordCount;
+    }
+
+    private static void writeWordCount(String outputFilePath, Map<String, Integer> wordCount) {
+        try (FileWriter writer = new FileWriter(outputFilePath)) {
+            for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
+                writer.write(entry.getKey() + " " + entry.getValue() + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
