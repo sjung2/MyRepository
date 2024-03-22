@@ -1,0 +1,122 @@
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+
+public class Assignment_15 extends Application {
+
+    private static final int BOARD_SIZE = 5;
+    private static final int WINNING_COUNT = 5;
+
+    private Button[][] buttons = new Button[BOARD_SIZE][BOARD_SIZE];
+    private boolean playerXTurn = true;
+    private boolean gameEnded = false;
+
+    @Override
+    public void start(Stage primaryStage) {
+        GridPane grid = new GridPane();
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                Button button = new Button();
+                button.setMinSize(100, 100);
+                button.setOnAction(event -> {
+                    if (!gameEnded && !button.getText().equals("")) {
+                        return;
+                    }
+                    if (playerXTurn) {
+                        button.setText("X");
+                    } else {
+                        button.setText("O");
+                    }
+                    if (checkForWin()) {
+                        showWinner(playerXTurn ? "X" : "O");
+                        gameEnded = true;
+                    } else if (isBoardFull()) {
+                        showDraw();
+                        gameEnded = true;
+                    } else {
+                        playerXTurn = !playerXTurn;
+                    }
+                });
+                buttons[i][j] = button;
+                grid.add(button, j, i);
+            }
+        }
+
+        Scene scene = new Scene(grid, 500, 500);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Tic Tac Toe");
+        primaryStage.show();
+    }
+
+    private boolean checkForWin() {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j <= BOARD_SIZE - WINNING_COUNT; j++) {
+                if (checkLine(j, i, 1, 0)) {
+                    return true;
+                }
+            }
+        }
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j <= BOARD_SIZE - WINNING_COUNT; j++) {
+                if (checkLine(i, j, 0, 1)) {
+                    return true;
+                }
+            }
+        }
+
+        for (int i = 0; i <= BOARD_SIZE - WINNING_COUNT; i++) {
+            for (int j = 0; j <= BOARD_SIZE - WINNING_COUNT; j++) {
+                if (checkLine(j, i, 1, 1) || checkLine(j + WINNING_COUNT - 1, i, -1, 1)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkLine(int startX, int startY, int deltaX, int deltaY) {
+        String symbol = playerXTurn ? "X" : "O";
+        for (int i = 0; i < WINNING_COUNT; i++) {
+            if (!buttons[startY + i * deltaY][startX + i * deltaX].getText().equals(symbol)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isBoardFull() {
+        for (Button[] row : buttons) {
+            for (Button button : row) {
+                if (button.getText().equals("")) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void showWinner(String winner) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Winner");
+        alert.setHeaderText(null);
+        alert.setContentText("Player " + winner + " wins!");
+        alert.showAndWait();
+    }
+
+    private void showDraw() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Draw");
+        alert.setHeaderText(null);
+        alert.setContentText("Draw");
+        alert.showAndWait();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
